@@ -1,0 +1,14 @@
+{
+  "name": "webtech-frontend",
+  "version": "1.0.0",
+  "description": "Frontend für Webtech-App",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Max Maier",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
