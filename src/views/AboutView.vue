@@ -1,5 +1,16 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <ShoppingList title="Supermarkt"/>
   </div>
 </template>
+
+<script>
+import ShoppingList from '@/components/ShoppingList.vue'
+
+export default {
+  name: 'AboutView',
+  components: {
+    ShoppingList
+  }
+}
+</script>
