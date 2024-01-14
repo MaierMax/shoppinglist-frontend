@@ -5,7 +5,7 @@
   </div>
   <div class="centered-container">
     <div id="adding">
-      <input v-model="nameField" placeholder="Name" type="text" ref="nameInput" @keyup.enter="save()">
+      <input v-model="nameField" placeholder="New List" type="text" ref="nameInput" @keyup.enter="save()">
       <button type="button" @click="save()">Save</button>
     </div>
   </div>
@@ -24,7 +24,7 @@
         </tr>
         <tr v-for="list in lists" :key="list.listID">
           <td @click="changeList(list)"><img :src="require(`@/assets/pen.png`)" alt="Image" id="little-image"></td>
-          <td @click="open(list.listID, list.listName)">{{ list.listName }}</td>
+          <td style="cursor: pointer;" @click="open(list.listID, list.listName)">{{ list.listName }}</td>
           <td @click="deleteList(list.listID)"><img :src="require(`@/assets/bin.png`)" alt="Image" id="little-image"></td>
         </tr>
         <tr v-if="nameField != null && nameField !== ''">
@@ -46,6 +46,7 @@ export default {
       nameField: ''
     }
   },
+
   methods: {
     loadThings () {
       const endpoint = 'http://localhost:8080/home'
@@ -60,6 +61,7 @@ export default {
         }))
         .catch(error => console.log('error', error))
     },
+
     save () {
       const endpoint = 'http://localhost:8080/saveList'
       const data = {
@@ -80,6 +82,7 @@ export default {
         .catch(error => console.log('error', error))
       location.reload()
     },
+
     open (listID, listName) {
       const endpoint = 'http://localhost:8080/getItemsOfList/' + listID
       const requestOptions = {
@@ -94,6 +97,7 @@ export default {
         .catch(error => console.log('error', error))
       this.$router.push({ name: 'list', params: { listID: listID, title: listName } })
     },
+
     deleteList (listID) {
       const endpoint = 'http://localhost:8080/deleteList/' + listID
       const requestOptions = {
@@ -110,6 +114,7 @@ export default {
         .catch(error => console.log('error', error))
       location.reload()
     },
+
     deleteAll () {
       if (confirm('Do you want to delete all lists and items in those lists?')) {
         const endpoint = 'http://localhost:8080/deleteAllLists'
@@ -128,6 +133,7 @@ export default {
         location.reload()
       }
     },
+
     changeList (list) {
       const update = prompt('Please enter the new Name', list.listName)
       if (update != null && update !== '') {
@@ -152,6 +158,7 @@ export default {
       }
     }
   },
+
   mounted () {
     this.loadThings()
   }
@@ -159,23 +166,10 @@ export default {
 </script>
 
 <style scoped>
-
-  table {
-    margin: 0 auto;
-    width: 20%;
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-
-  th {
-    background-color: #f2f2f2;
-  }
-
-  button {
-    padding: 10px 16px;
-    background-color: #64b467;
-    color: black;
-    border: none;
-    cursor: pointer;
-  }
+table {
+  margin: 0 auto;
+  width: 20%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
 </style>

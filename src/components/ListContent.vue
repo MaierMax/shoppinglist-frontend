@@ -17,26 +17,40 @@
     <table>
       <thead>
         <tr>
-          <th></th>
-          <th>Name</th>
-          <th>Description</th>
-          <th></th>
+          <th style="width: 10%;"></th>
+          <th id="name" style="width: 30%;">Name</th>
+          <th id="description" style="width: 30%;">Description</th>
+          <th style="width: 10%;"></th>
         </tr>
       </thead>
+    </table>
+  </div>
+  <div v-for="(items, category) in categorizedItems" :key="category">
+    <div class="category-header">
+      <button @click="toggleCategoryVisibility(category)">-{{ category }}</button>
+    </div>
+    <table v-show="isCategoryVisible(category)">
       <tbody>
         <tr v-if="items.length === 0">
           <td colspan="4" style="text-align: center;">No products yet</td>
         </tr>
         <tr v-for="item in items" :key="item.itemID">
-          <td><input type="checkbox" v-model="checkedItems[item.itemID]" @change="handleCheckboxChange(item.itemID)"></td>
-          <td @click="changeItem(item, item.itemName, 'Name')">{{ item.itemName }}</td>
-          <td @click="changeItem(item, item.itemDescr, 'Description')">{{ item.itemDescr }}</td>
-          <td @click="deleteItem(item.itemID)"><img :src="require(`@/assets/bin.png`)" alt="Image" id="little-image"></td>
+          <td id="checkbox" style="width: 10%;"><input type="checkbox" v-model="checkedItems[item.itemID]" @change="handleCheckboxChange(item.itemID)"></td>
+          <td id="name" style="width: 30%;" @click="changeItem(item, item.itemName, 'Name')">{{ item.itemName }}</td>
+          <td id="description" style="width: 30%;" @click="changeItem(item, item.itemDescr, 'Description')">{{ item.itemDescr }}</td>
+          <td id="bin" style="width: 10%;" @click="deleteItem(item.itemID)"><img :src="require(`@/assets/bin.png`)" alt="Image" id="little-image"></td>
         </tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <table>
+      <tbody>
         <tr v-if="nameField !== '' || descrField !== ''">
-          <td></td>
-          <td>{{ nameField }}</td>
-          <td>{{ descrField }}</td>
+          <td style="width: 10%;"></td>
+          <td id="name" style="width: 30%;">{{ nameField }}</td>
+          <td id="description" style="width: 30%;">{{ descrField }}</td>
+          <td style="width: 10%;"></td>
         </tr>
       </tbody>
     </table>
@@ -44,6 +58,7 @@
 </template>
 
 <script>
+import { getCategory } from '@/assets/categorySorter.js'
 export default {
   name: 'DynamicForm',
   props: {
@@ -54,14 +69,31 @@ export default {
       type: String
     }
   },
+
   data () {
     return {
       items: [],
       nameField: '',
       descrField: '',
-      checkedItems: []
+      checkedItems: [],
+      visibleCategories: {}
     }
   },
+
+  computed: {
+    categorizedItems () {
+      const result = {}
+      this.items.forEach(item => {
+        const category = getCategory(item.itemName)
+        if (!result[category]) {
+          result[category] = []
+        }
+        result[category].push(item)
+      })
+      return result
+    }
+  },
+
   methods: {
     loadThings () {
       const endpoint = 'http://localhost:8080/getItemsOfList/' + this.listID
@@ -76,6 +108,7 @@ export default {
         }))
         .catch(error => console.log('error', error))
     },
+
     save () {
       const endpoint = 'http://localhost:8080/saveItem'
       const data = {
@@ -96,11 +129,15 @@ export default {
           console.log('Success:', data)
         })
         .catch(error => console.log('error', error))
+      const category = getCategory(this.nameField)
+      console.log('Category: ', category)
       location.reload()
     },
+
     back () {
       this.$router.push({ name: 'home' })
     },
+
     deleteItem (itemID) {
       const endpoint = 'http://localhost:8080/deleteItem/' + itemID
       const requestOptions = {
@@ -117,9 +154,11 @@ export default {
         .catch(error => console.log('error', error))
       location.reload()
     },
+
     handleCheckboxChange (itemID) {
       console.log(`Checkbox for item ${itemID + 1} changed. New value: ${this.checkedItems[itemID]}`)
     },
+
     deleteItems () {
       for (const item of this.items) {
         if (item.itemID in this.checkedItems) {
@@ -128,6 +167,7 @@ export default {
       }
       location.reload()
     },
+
     changeItem (item, currentValue, text) {
       const update = prompt('Please enter the new ' + text, currentValue)
       if (update != null && update !== '') {
@@ -161,11 +201,21 @@ export default {
           })
           .catch(error => console.log('error', error))
       }
+    },
+
+    toggleCategoryVisibility (category) {
+      this.visibleCategories[category] = !this.isCategoryVisible(category)
+    },
+
+    isCategoryVisible (category) {
+      return this.visibleCategories[category] !== false
     }
   },
+
   mounted () {
     this.loadThings()
   },
+
   watch: {
     listID: 'loadThings'
   }
@@ -173,22 +223,45 @@ export default {
 </script>
 
 <style scoped>
+
   table {
     margin: 0 auto;
-    width: 20%;
+    width: 30%;
     border-collapse: collapse;
     border-spacing: 0;
   }
-
-  th {
-    background-color: #f2f2f2;
+  .category-header {
+    display: flex;
+    align-items: left;
+    margin: 0 auto;
+    width: 30%;
   }
 
-  button {
+  .category-header button {
     color: black;
     padding: 10px 16px;
-    background-color: #64b467;
+    background-color: transparent;
     border: none;
     cursor: pointer;
+    font-size: 14px;
+    margin-left: 0vh;
+  }
+
+  #checkbox {
+    text-align: left;
+  }
+
+  #bin {
+    text-align: right;
+  }
+
+  #text {
+    text-align: center;
+    padding: 8px;
+  }
+
+  #description {
+    text-align: center;
+    padding: 8px;
   }
 </style>

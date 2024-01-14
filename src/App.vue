@@ -12,16 +12,25 @@
 }
 
 .centered-container {
-  display: flex;
   align-items: center;
   justify-content: center;
   height: 8vh;
+  position: sticky;
+}
+
+button {
+  color: black;
+  padding: 10px 16px;
+  background-color: #64b467;
+  border: none;
+  cursor: pointer;
 }
 
 .button-left {
   position: absolute;
   top: 1vh;
   left: 2vh;
+  position: fixed;
 }
 
 .button-left button {
@@ -32,6 +41,7 @@
   position: absolute;
   top: 1vh;
   right: 2vh;
+  position: fixed;
 }
 
 .button-right button {
@@ -48,11 +58,8 @@
   height: 16px;
 }
 
-table {
-  border-collapse: separate;
-}
-
 th {
+  background-color: #f2f2f2;
   padding: 10px 0;
 }
 
@@ -62,17 +69,17 @@ td {
 }
 
 #adding {
-    position: relative;
-    text-align: center;
-    margin-top: 20px;
-  }
+  text-align: center;
+  margin-top: 5px;
+}
 
-  #adding input {
-    padding: 8px;
-    margin-right: 5px;
-  }
+#adding input {
+  padding: 8px;
+  margin-right: 5px;
+}
 
-  h3 {
-    font-size: 30px;
-  }
+h3 {
+  font-size: 30px;
+  margin-top: 1vh;
+}
 </style>
